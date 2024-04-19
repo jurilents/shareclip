@@ -71,6 +71,10 @@ try {
       process.exit(1)
     }
     process.env.PORT = process.argv[process.argv.indexOf("-p") + 1]
+    if (process.env.PORT < 1024 || process.env.PORT > 65535 || isNaN(+process.env.PORT)) {
+      console.log("Invalid port")
+      process.exit(1)
+    }
     process.argv.splice(process.argv.indexOf("-p"), 2)
   }
 
@@ -85,7 +89,7 @@ try {
       }
       console.log(`Found ${devices.length} devices on the network`)
       for (const device of devices) {
-        tcpPortUsed.check(process.env.PORT, device.ip)
+        tcpPortUsed.check(+process.env.PORT || 55500, device.ip)
             .then(function (inUse) {
               if (inUse) {
                 console.log(`Connecting to ${device.ip}:${process.env.PORT}`)
